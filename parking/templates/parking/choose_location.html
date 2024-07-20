@@ -1,0 +1,282 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ateneo Parking Lots</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f0f4f8;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: center;
+        }
+        h1 {
+            color: #003b6f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #555;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .main-content {
+            display: flex;
+            align-items: flex-start;
+            justify-content: center;
+            gap: 20px;
+        }
+        .main-content img {
+            max-width: 550px;
+            width: 100%;
+            height: auto;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+        }
+        .table-container {
+            flex: 1;
+            margin-bottom: 20px; /* Adds space below the table */
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 15px;
+            text-align: center;
+        }
+        th {
+            background-color: #003b6f;
+            color: white;
+        }
+        td {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .button {
+            background-color: #003b6f;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-flex;
+            font-size: 14px;
+            margin: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #002f5d;
+        }
+        .button-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0; /* Space around the button container */
+        }
+        .help-section {
+            margin-top: 40px;
+            text-align: center;
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .help-section h2 {
+            color: #003b6f;
+            margin-bottom: 20px;
+        }
+        .help-section select {
+            padding: 10px;
+            font-size: 16px;
+            margin-bottom: 20px;
+        }
+        .help-section ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        .help-section li {
+            background-color: #f0f4f8;
+            margin: 5px 0;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        /* Modal styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
+            padding-top: 60px;
+        }
+        .modal-content {
+            margin: 5% auto;
+            padding: 20px;
+            border: 1px solid #888;
+            width: 80%;
+            max-width: 700px;
+            background-color: white;
+            border-radius: 10px;
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
+    </style>
+    <script>
+        function showSuggestedCarpark() {
+            const buildingCarparks = {
+                "ISO": ["ISO  - North Carpark (0m)", "Arete - North West Carpark (400m)", "Bellarmine Carpark (750m)", "Covered Courts - Lower East Carpark (750m)", "Covered Courts - Upper East Carpark (800m)", "JSEC Central Carpark (1km)"],
+                "Faber Hall": ["ISO - North Carpark (180m)", "Bellarmine Carpark (400m)", "Covered Courts - Lower East Carpark (400m)", "Covered Courts - Upper East Carpark (500m)", "Arete - North West Carpark (550m)", "JSEC Central Carpark (700m)" ],
+                "Kostka Building": ["Covered Courts - Lower East Carpark (350m)", "ISO  - North Carpark (400m)", "Bellarmine Carpark (400m)", "Covered Courts - Upper East Carpark (450m)", "JSEC Central Carpark (700m)", "Arete - North West Carpark (800m)"],
+                "MVP Center": ["ISO - North Carpark (400m)", "Covered Courts - Lower East Carpark (600m)", "Covered Courts - Upper East Carpark (700m)", "Bellarmine Carpark (700m)", "Arete - North West Carpark (750m)", "JSEC Central Carpark (900m)"],
+                "Berchmans Building": ["Covered Courts - Lower East Carpark (300m)", " ISO - North Carpark (350m)", "Bellarmine Carpark (350m)", "Covered Courts - Upper East Carpark (400m)", "JSEC Central Carpark (650m)", "Arete - North West Carpark (750m)"],
+                "Bellarmine": ["Bellarmine Carpark (0m)", "ISO - North Carpark (160m)", "Arete - North West Carpark (550m)", "Covered Courts - Lower East Carpark (600m)", "Covered Courts - Upper East Carpark (700m)", "JSEC Central Carpark (950m)"],
+                "Church of the Gesu": ["Bellarmine Carpark (200m)", "Bellarmine Carpark (200m)", "Arete - North West Carpark (600m)", "Covered Courts - Lower East Carpark (650m)", "Covered Courts - Upper East Carpark (750m)", "JSEC Central Carpark (1km)"],
+                "Arete": ["Arete - North West Carpark (0m)", "ISO - North Carpark (350m)", "Bellarmine Carpark (750m)", "Covered Courts - Lower East Carpark (750m)", "Covered Courts - Upper East Carpark (850m)", "JSEC Central Carpark (1.1km)"],
+                "Leong Hall": ["ISO - North Carpark (400m)", "Covered Courts - Lower East Carpark (600m)", "Bellarmine Carpark (650m)", "Covered Courts - Upper East Carpark (700m)", "Arete - North West Carpark (800m)", "JSEC Central Carpark (950m)"],
+                "New Rizal Library": ["ISO - North Carpark (550m)", "Covered Courts - Lower East Carpark (750m)", "Bellarmine Carpark (800m)", "Covered Courts - Upper East Carpark (850m)", "Arete - North West Carpark (900m)", "JSEC Central Carpark (1.1km)"],
+                "SocSci Building": ["ISO - North Carpark (300m)", "Covered Courts - Lower East Carpark (500m)", "Bellarmine Carpark (550m)", "Covered Courts - Upper East Carpark (600m)", "Arete - North West Carpark (700m)", "JSEC Central Carpark (850m)"],
+                "Dela Costa Hall": ["Bellarmine Carpark (750m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.2km)", " Covered Courts - Lower East Carpark (1.2km)", "Covered Courts - Upper East Carpark (1.3km)", "JSEC Central Carpark (1.5km)"],
+                "Faura Hall": ["Covered Courts - Lower East Carpark (190m)", "Covered Courts - Upper East Carpark (270m)", " ISO - North Carpark (400m)", "JSEC Central Carpark (500m)", "Bellarmine Carpark (650m)", "Arete - North West Carpark (750m)"],
+                "SEC-A": ["JSEC Central Carpark (0m)", "Covered Courts - Upper East Carpark (230m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.3km)", "Bellarmine Carpark (1.3km)"],
+                "SEC-B": ["JSEC Central Carpark (0m)", "Covered Courts - Upper East Carpark (230m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.3km)", "Bellarmine Carpark (1.3km)"],
+                "SEC-C": ["JSEC Central Carpark (0m)", "Covered Courts - Upper East Carpark (230m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.3km)", "Bellarmine Carpark (1.3km)"],
+                "IRH": ["Covered Courts - Lower East Carpark (350m)", "Bellarmine Carpark (400m)", "Covered Courts - Upper East Carpark (450m)", "Arete - North West Carpark (500m)", "JSEC Central Carpark (650m)", "ISO - North Carpark (700m)"],
+                "Covered Courts": ["Covered Courts - Upper East Carpark (270m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1km)", "Bellarmine Carpark (1km)", "JSEC Central Carpark (1.6km)"],
+                "Manila Observatory": ["Covered Courts - Upper East Carpark (200m)", "Covered Courts - Lower East Carpark (280m)", "ISO - North Carpark (700m)", "Arete - North West Carpark (900m)", "Bellarmine Carpark (900m)", "JSEC Central Carpark (1.5km)"],
+                "Gonzaga Hall": ["Covered Courts - Upper East Carpark (220m)", "Covered Courts - Lower East Carpark (230m)", "JSEC Central Carpark (250m)", "ISO - North Carpark (270m)", "Arete - North West Carpark (450m)", "Bellarmine Carpark (450m)"],
+                "Schmitt Hall": ["Covered Courts - Upper East Carpark (190m)", "Covered Courts - Lower East Carpark (270m)", "JSEC Central Carpark (500m)", "ISO - North Carpark (1.5km)", "Bellarmine Carpark (1.7km)", "Arete - North West Carpark (1.9km)" ],
+                "JSEC": ["JSEC Central Carpark (0m)", "Covered Courts - Upper East Carpark (230m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.3km)", "Bellarmine Carpark (1.3km)"],
+                "SOM": ["JSEC Central Carpark (0m)", "Covered Courts - Upper East Carpark (230m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.3km)", "Bellarmine Carpark (1.3km)"],
+                "CTC": ["JSEC Central Carpark (0m)", "Covered Courts - Upper East Carpark (230m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.3km)", "Bellarmine Carpark (1.3km)"],
+                "Matteo Ricci Study Hall": ["JSEC Central Carpark (0m)", "Covered Courts - Upper East Carpark (230m)", "Covered Courts - Lower East Carpark (300m)", "ISO - North Carpark (800m)", "Arete - North West Carpark (1.3km)", "Bellarmine Carpark (1.3km)"]
+            };
+
+            const building = document.getElementById("buildingDropdown").value;
+            const carparks = buildingCarparks[building] || [];
+            const carparkList = document.getElementById("carparkList");
+
+            carparkList.innerHTML = carparks.map(carpark => `<li>${carpark}</li>`).join('');
+        }
+
+        function showModal() {
+            document.getElementById('imageModal').style.display = "block";
+        }
+
+        function closeModal() {
+            document.getElementById('imageModal').style.display = "none";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Ateneo Parking Lots</h1>
+        <p>Here are the available slots for each parking area. Please be guided by the map in finding a parking space closest to your intended destination.</p>
+        
+        <div class="main-content">
+            <img src="https://www.ateneo.edu/sites/default/files/inline-images/LH-traffic-Map-02.png" alt="Ateneo Traffic Map" onclick="showModal()">
+            
+            <div class="table-container">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Location</th>
+                            <th>Available Spots</th>
+                            <th>Total Capacity</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for location_data in locations_with_details %}
+                            <tr>
+                                <td>
+                                    <a href="{% url 'view_places' location_data.location.id %}">
+                                        {{ location_data.location.name }}
+                                    </a>
+                                </td>
+                                <td>{{ location_data.available_spots }}</td>
+                                <td>{{ location_data.total_capacity }}</td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="button-container">
+            <button class="button" type="button" onclick="window.location.href='{% url 'home' %}'">Back to Home</button> 
+            <button class="button" type="button" onclick="window.location.href='{% url 'history' %}'">Active Reservations (Admin)</button>
+        </div>
+        
+        <div class="help-section">
+            <h2>Need some help? Let us know where you are headed!</h2>
+            <label for="buildingDropdown">Select Building:</label>
+            <select id="buildingDropdown" onchange="showSuggestedCarpark()">
+                <option value="">--Select a building--</option>
+                <option value="ISO">ISO</option>
+                <option value="Faber Hall">Faber Hall</option>
+                <option value="Kostka Building">Kostka Building</option>
+                <option value="MVP Center">MVP Center</option>
+                <option value="Berchmans Building">Berchmans Building</option>
+                <option value="Bellarmine">Bellarmine</option>
+                <option value="Church of the Gesu">Church of the Gesu</option>
+                <option value="Arete">Arete</option>
+                <option value="Leong Hall">Leong Hall</option>
+                <option value="New Rizal Library">New Rizal Library</option>
+                <option value="SocSci Building">SocSci Building</option>
+                <option value="Dela Costa Hall">Dela Costa Hall</option>
+                <option value="Faura Hall">Faura Hall</option>
+                <option value="SEC-A">SEC-A</option>
+                <option value="SEC-B">SEC-B</option>
+                <option value="SEC-C">SEC-C</option>
+                <option value="IRH">IRH</option>
+                <option value="Covered Courts">Covered Courts</option>
+                <option value="Manila Observatory">Manila Observatory</option>
+                <option value="Gonzaga Hall">Gonzaga Hall</option>
+                <option value="Schmitt Hall">Schmitt Hall</option>
+                <option value="JSEC">JSEC</option>
+                <option value="SOM">SOM</option>
+                <option value="CTC">CTC</option>
+                <option value="Matteo Ricci Study Hall">Matteo Ricci Study Hall</option>
+            </select>
+            <ul id="carparkList"></ul>
+        </div>
+    </div>
+
+    <div id="imageModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <img src="https://www.ateneo.edu/sites/default/files/inline-images/LH-traffic-Map-02.png" alt="Ateneo Traffic Map" style="width: 100%; height: auto;">
+        </div>
+    </div>
+</body>
+</html>

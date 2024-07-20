@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Home</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            margin: 0;
+            padding: 0;
+            background: url('http://www.ateneo.edu/sites/default/files/2022-10/av-DSC01684-campus2.JPG') no-repeat center center fixed;
+            background-size: cover;
+            color: black;
+            text-align: center;
+        }
+        .container {
+            max-width: 800px;
+            margin: 50px auto;
+            background-color: rgba(255, 255, 255, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+        }
+        h1 {
+            color: #003b6f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        p {
+            color: black;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .button {
+            background-color: #003b6f;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            font-size: 14px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #002f5d;
+        }
+        .centerbutton {
+            display:flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Ateneo SPARK</h1>
+        <p>Greetings! Welcome to the <b>Ateneo Smart Parking Assistance and Reservation e-Kiosk (SPARK).</b></p>
+        <p>SPARK will allow you to easily find and reserve an available slot in one of Ateneo's parking spaces, saving you the hassle of going around the campus in search of one! A map of the designated parking areas within the campus is provided on the next page, along with a live tracker of how many slots are available for each one.</p>
+        <p>Please be reminded that upon reservation, you will be required to input your vehicle's plate number and your ID number. For students, faculty, staff, and administrators, please input your Ateneo ID number. For guests, please input "GUEST".</p>
+        <p>Further instructions and guidelines are provided on the next pages. Thank you for using SPARK!</p>
+        <p><strong>NOTICE: Please use SPARK only when traffic conditions permit.</strong></p>
+        <div class="centerbutton">
+            <button class="button" type="button" onclick="window.location.href='{% url 'choose_location' %}'">Click Here to Start</button>
+        </div>
+    </div>
+</body>
+</html>
+
+

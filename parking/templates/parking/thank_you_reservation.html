@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Thank You for Your Reservation</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            background-color: #f0f4f8;
+            margin: 20px;
+            padding: 0;
+        }
+        h1 {
+            color: #003b6f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-align: center
+        }
+        p {
+            color: #555;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+         .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            text-align: left;
+        }
+        table {
+            width: 40%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 10px;
+            text-align: left;
+        }
+        th {
+            background-color: #003b6f;
+            color: white;
+        }
+        td {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .button {
+            background-color: #003b6f;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            font-size: 14px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #002f5d;
+        }
+        .centerbutton {
+            display:flex;
+            justify-content: center;
+            align-items: center;
+        }
+    </style>
+</head>
+<body>
+    <div class = 'container'>
+        <h1>You have successfully confirmed your parking space!</h1>
+        <p>Here are your booking details:</p>
+        <table>
+            <tr>
+                <th>ID Number</th>
+                <td>{{ reservation.id_number }}</td>
+            </tr>
+            <tr>
+                <th>Plate Number</th>
+                <td>{{ reservation.plate_number }}</td>
+            </tr>
+            <tr>
+                <th>Location</th>
+                <td>{{ reservation.spot.location.name }}</td>
+            </tr>
+            <tr>
+                <th>Spot Number</th>
+                <td>{{ reservation.spot.number }}</td>
+            </tr>
+        </table>
+        <p> To avoid penalties, be sure to be in the parking space <b> at most 10 minutes </b> after this booking. </p>
+            <p> Please do not forget to click <b> "Cancel Reservation" </b> as you leave the parking space later on. <br>
+            Parking tickets may be issued to (1) vehicles parked in the corresponding area but are not logged in and (2) vehicles logged in a slot via SPARK but are not in the parking space. 
+        </p>
+        <div class = 'centerbutton'> 
+        <button class ='button' type="button" onclick="window.location.href='{% url 'home' %}'">Back to Home</button>
+        </div>
+</body>
+</html>
+

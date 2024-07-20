@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>View Places</title>
+    <style>
+        body {
+            font-family: Arial, Helvetica, sans-serif;
+            text-align: center;
+            font-size: 14px; 
+            margin: 10px;
+            background-color: #f0f4f8;
+        }
+        h1 {
+            color: #003b6f;
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+        p {
+            color: #555;
+            font-size: 1.2em;
+            margin-bottom: 20px;
+        }
+        .container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        table {
+            width: 65%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+            background-color: #fff;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        th, td {
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #003b6f;
+            color: white;
+        }
+        td {
+            border-bottom: 1px solid #f0f0f0;
+        }
+        tr:last-child td {
+            border-bottom: none;
+        }
+        .occupied {
+            background-color: grey;
+            color: white;
+        }
+        .available {
+            background-color: lightgray;
+        }
+        .hidden {
+            display: none;
+        }
+        .reservebutton {
+            background-color: darkseagreen;
+            color: white;
+            padding: 7px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+        .cancelbutton {
+            background-color: rgb(238, 152, 152);
+            color: white;
+            padding: 7px 10px;
+            text-align: center;
+            text-decoration: none;
+            display: inline-block;
+            font-size: 13px;
+            margin: 10px 2px;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+        }
+        .backbutton {
+            background-color: #003b6f;
+            color: white;
+            padding: 10px 20px;
+            text-align: center;
+            text-decoration: none;
+            display: flex;
+            font-size: 14px;
+            margin: 10px 0;
+            cursor: pointer;
+            border-radius: 5px;
+            border: none;
+            transition: background-color 0.3s ease;
+        }
+        .button:hover {
+            background-color: #002f5d;
+        }
+        .reservetext {
+            font-size: 11px;
+        }
+        .messages {
+            margin: 20px;
+            padding: 10px;
+        }
+        .alert {
+            padding: 15px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .alert-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .alert-error {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+    <script>
+        function toggleForm(id) {
+            var form = document.getElementById(id);
+            form.style.display = form.style.display === "none" ? "block" : "none";
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">{{ message }}</div>
+                {% endfor %}
+            </div>
+        {% endif %}
+        
+        <h1>Parking Reservations at {{ location.name }}</h1>
+        <p>Please select any of the available slots below. Rest assured that the information you input will be used solely for this application.<br> <b>NOTE:</b> The graphical arrangement below is simply a tracker. No such arrangement is required in the actual parking space.</p> <br>
+        <table>
+            <thead>
+                <tr>
+                    <th>Total Capacity</th>
+                    <th>Available Spots</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>{{ total_capacity }}</td>
+                    <td>{{ available_spots }}</td>
+                </tr>
+            </tbody>
+        </table>
+
+        {% load custom_tags %}
+        
+        <table>
+            <tbody>
+                {% for row in spots|chunks:5 %}
+                    <tr>
+                        {% for spot in row %}
+                            <td class="{% if spot.is_available %}available{% else %}occupied{% endif %}">
+                                {{ spot.number }}
+                                {% if not spot.is_available %}
+                                    <div class='reservetext'>
+                                    <div>Reserved: {{ spot_reservations|dictkey:spot.id|default:'' }}</div>
+                                    </div>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if spot.is_available %}
+                                    <button class="reservebutton" type="button" onclick="toggleForm('reserve-form-{{ spot.id }}')">Reserve</button>
+                                    <div id="reserve-form-{{ spot.id }}" class="hidden">
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="spot_id" value="{{ spot.id }}">
+                                            {{ reservation_form.as_p }}
+                                            <button type="submit" name="reserve">Submit</button>
+                                        </form>
+                                        <button type="button" onclick="toggleForm('reserve-form-{{ spot.id }}')">Back</button>
+                                    </div>
+                                {% else %}
+                                    <button class="cancelbutton" type="button" onclick="toggleForm('cancel-form-{{ spot.id }}')">Cancel Reservation</button>
+                                    <div id="cancel-form-{{ spot.id }}" class="hidden">
+                                        <form method="post" style="display: inline;">
+                                            {% csrf_token %}
+                                            <input type="hidden" name="spot_id" value="{{ spot.id }}">
+                                            {{ cancel_form.as_p }}
+                                            <button type="submit" name="cancel">Submit</button>
+                                        </form>
+                                        <button type="button" onclick="toggleForm('cancel-form-{{ spot.id }}')">Back</button>
+                                    </div>
+                                {% endif %}
+                            </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <button class="backbutton" type="button" onclick="window.location.href='{% url 'choose_location' %}'">Back to Locations</button>
+    </div>
+</body>
+</html>
